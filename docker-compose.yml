@@ -3,7 +3,19 @@ services:
   app:
     build: .
     command: npm start
+    depends_on:
+      - couchdb
     env_file:
       - .env
     ports:
       - '${PORT}:${PORT}'
+  couchdb:
+    image: couchdb
+    container_name: couchdb
+    ports:
+      - '${COUCHDB_PORT}:${COUCHDB_PORT}'
+    env_file:
+      - .env
+    volumes:
+      - /opt/couchdb/etc/local.d
+      - /opt/couchdb/data
