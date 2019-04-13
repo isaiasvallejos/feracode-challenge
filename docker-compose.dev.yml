@@ -7,5 +7,6 @@ services:
     command: npm run dev
     volumes:
       - .:/usr/app
+      - /usr/app/node_modules
     environment:
       - NODE_ENV=development
