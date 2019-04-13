@@ -1,0 +1,50 @@
+{
+  "name": "feracode-challenge",
+  "version": "1.0.0",
+  "description": "A fun challenge by Feracode company",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "nodemon -L --watch src --exec babel-node src/index.js",
+    "test": "mocha test/**/*.test.js --require @babel/register --exit",
+    "build": "babel src/ -d dist/ -s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaiasvallejos/feracode-challenge.git"
+  },
+  "keywords": [
+    "feracode",
+    "challenge",
+    "rest",
+    "api",
+    "crud",
+    "ecommerce",
+    "diaper"
+  ],
+  "author": "Isaias Vallejos <me@isaiasvallejos.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/isaiasvallejos/feracode-challenge/issues"
+  },
+  "homepage": "https://github.com/isaiasvallejos/feracode-challenge#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.3.3",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/register": "^7.0.0",
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.10"
+  },
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "ramda": "^0.26.1"
+  }
+}
