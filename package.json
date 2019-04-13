@@ -7,7 +7,16 @@
     "start": "node dist/index.js",
     "dev": "nodemon -L --watch src --exec babel-node src/index.js",
     "test": "mocha test/**/*.test.js --require @babel/register --exit",
-    "build": "babel src/ -d dist/ -s"
+    "build": "babel src/ -d dist/ -s",
+    "docker:build-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache app",
+    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d app",
+    "docker:build": "docker-compose build --no-cache app",
+    "docker:start": "docker-compose up -d app",
+    "docker:init": "docker-compose up --build -d app",
+    "docker:stop": "docker-compose stop app",
+    "docker:remove": "docker-compose rm app",
+    "docker:logs": "docker-compose logs app",
+    "docker:tests": "npm run dev && docker-compose exec app npm run test"
   },
   "repository": {
     "type": "git",
