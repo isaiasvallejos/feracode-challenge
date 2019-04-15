@@ -19,6 +19,9 @@ export const get = curry((id, database) =>
   database.get(id).then(fixDocumentKeys)
 )
 
+// destroy :: String -> String -> Nano.Database -> Promise<Nano.DatabaseDestroyResponse>
+export const destroy = curry((id, rev, database) => database.destroy(id, rev))
+
 // list :: Nano.Database -> Promise<Nano.DatabaseGetResponse[]>
 export const list = database =>
   database.list({ include_docs: true }).then(getRowsDocuments)
