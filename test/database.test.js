@@ -9,7 +9,7 @@ import {
   getDefaultConnectionUrl
 } from 'vendor/couchdb/connection'
 
-import { insert, get, update, list } from 'vendor/couchdb/data'
+import { insert, get, update, list, findAll } from 'vendor/couchdb/data'
 
 describe('database → couchdb', () => {
   const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
@@ -77,6 +77,27 @@ describe('database → couchdb', () => {
 
         responseList.every(response =>
           expect(response).to.include.all.keys(['id', 'rev'])
+        )
+      })
+  })
+
+  it('should find documents with mango query', () => {
+    return insertNTestDocuments(5)
+      .then(() =>
+        findAll(
+          {
+            fields: ['name', 'createdAt']
+          },
+          database
+        )
+      )
+      .then(responseList => {
+        expect(responseList)
+          .to.be.an('array')
+          .and.lengthOf(5)
+
+        responseList.every(response =>
+          expect(response).to.have.all.keys(['id', 'rev', 'name', 'createdAt'])
         )
       })
   })

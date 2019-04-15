@@ -7,6 +7,9 @@ export const fixDocumentKeys = renameKeys({
   _rev: 'rev'
 })
 
+// fixDocumentsKeys :: DatabaseGetResponse[] -> DatabaseGetResponse[]
+export const fixDocumentsKeys = map(fixDocumentKeys)
+
 // getBodyRowsDocuments :: Nano.DatabaseListResponse -> DatabaseGetResponse[]
 export const getRowsDocuments = compose(
   map(
@@ -17,3 +20,6 @@ export const getRowsDocuments = compose(
   ),
   prop('rows')
 )
+
+// getDocuments :: Nano.DatabaseFindResponse -> DatabaseGetResponse[]
+export const getDocuments = prop('docs')

@@ -1,5 +1,10 @@
-import { curry } from 'ramda'
-import { getRowsDocuments, fixDocumentKeys } from './util'
+import { curry, compose, mergeDeepWith, flip, concat, map } from 'ramda'
+import {
+  getRowsDocuments,
+  fixDocumentKeys,
+  getDocuments,
+  fixDocumentsKeys
+} from './util'
 
 // insert :: Object -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
 export const insert = curry((data, database) => database.insert(data))
@@ -17,3 +22,22 @@ export const get = curry((id, database) =>
 // list :: Nano.Database -> Promise<Nano.DatabaseGetResponse[]>
 export const list = database =>
   database.list({ include_docs: true }).then(getRowsDocuments)
+
+// find :: Nano.MangoQuery -> Promise<Nano.DatabaseGetResponse[]>
+export const find = curry((query, database) =>
+  database
+    .find(query)
+    .then(getDocuments)
+    .then(fixDocumentsKeys)
+)
+
+// findAll :: Nano.MangoQuery -> Promise<Nano.DatabaseGetResponse[]>
+export const findAll = curry((query, database) =>
+  compose(
+    query => find(query, database),
+    mergeDeepWith(concat, {
+      fields: ['_id', '_rev'],
+      selector: { _id: { $gt: null } }
+    })
+  )(query)
+)
