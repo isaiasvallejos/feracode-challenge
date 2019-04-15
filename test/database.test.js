@@ -2,11 +2,10 @@ import { compose, times } from 'ramda'
 import { expect } from 'chai'
 
 import {
-  createConnection,
-  instanceDatabase,
   destroyDatabase,
   createDatabase,
-  getDefaultConnectionUrl
+  createConnectionAsDefault,
+  instanceDatabaseAsDefault
 } from 'vendor/couchdb/connection'
 
 import { insert, get, update, list, findAll } from 'vendor/couchdb/data'
@@ -15,13 +14,12 @@ describe('database → couchdb', () => {
   const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
 
   // Instance database with environment variables
-  const url = getDefaultConnectionUrl()
-  let connection = createConnection(url)
+  let connection = createConnectionAsDefault()
   let database
 
   beforeEach('should create test database', () => {
     return createDatabase(DATABASE_NAME, connection).then(() => {
-      database = instanceDatabase(url, DATABASE_NAME)
+      database = instanceDatabaseAsDefault(DATABASE_NAME)
     })
   })
 
