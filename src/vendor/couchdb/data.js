@@ -23,7 +23,7 @@ export const get = curry((id, database) =>
 export const list = database =>
   database.list({ include_docs: true }).then(getRowsDocuments)
 
-// find :: Nano.MangoQuery -> Promise<Nano.DatabaseGetResponse[]>
+// find :: Nano.MangoQuery -> Nano.Database -> Promise<Nano.DatabaseGetResponse[]>
 export const find = curry((query, database) =>
   database
     .find(query)
@@ -31,7 +31,7 @@ export const find = curry((query, database) =>
     .then(fixDocumentsKeys)
 )
 
-// findAll :: Nano.MangoQuery -> Promise<Nano.DatabaseGetResponse[]>
+// findAll :: Nano.MangoQuery -> Nano.Database -> Promise<Nano.DatabaseGetResponse[]>
 export const findAll = curry((query, database) =>
   compose(
     query => find(query, database),
