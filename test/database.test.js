@@ -1,5 +1,6 @@
 import { compose, times } from 'ramda'
 import { expect } from 'chai'
+import faker from 'faker'
 
 import {
   destroyDatabase,
@@ -8,7 +9,14 @@ import {
   instanceDatabaseAsDefault
 } from 'vendor/couchdb/connection'
 
-import { insert, get, update, list, findAll } from 'vendor/couchdb/data'
+import {
+  insert,
+  get,
+  update,
+  list,
+  findAll,
+  createIndex
+} from 'vendor/couchdb/data'
 
 describe('database → couchdb', () => {
   const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
@@ -26,7 +34,7 @@ describe('database → couchdb', () => {
   const insertTestDocument = () =>
     insert(
       {
-        name: 'test',
+        name: faker.name.findName(),
         createdAt: new Date()
       },
       database
@@ -53,6 +61,7 @@ describe('database → couchdb', () => {
       .then(({ id, rev }) =>
         update(
           {
+            name: faker.name.findName(),
             updatedAt: new Date()
           },
           id,
@@ -80,11 +89,24 @@ describe('database → couchdb', () => {
   })
 
   it('should find documents with mango query', () => {
-    return insertNTestDocuments(5)
+    return createIndex(
+      {
+        index: { fields: ['name'] },
+        name: 'sort-name'
+      },
+      database
+    )
+      .then(() => insertNTestDocuments(5))
       .then(() =>
         findAll(
           {
-            fields: ['name', 'createdAt']
+            sort: [
+              {
+                name: 'asc'
+              }
+            ],
+            fields: ['name', 'createdAt'],
+            limit: 3
           },
           database
         )
@@ -92,7 +114,7 @@ describe('database → couchdb', () => {
       .then(responseList => {
         expect(responseList)
           .to.be.an('array')
-          .and.lengthOf(5)
+          .and.lengthOf(3)
 
         responseList.every(response =>
           expect(response).to.have.all.keys(['id', 'rev', 'name', 'createdAt'])
