@@ -1,5 +1,5 @@
 import { compose, times } from 'ramda'
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import faker from 'faker'
 
 import {
@@ -15,7 +15,8 @@ import {
   update,
   list,
   findAll,
-  createIndex
+  createIndex,
+  findOne
 } from 'vendor/couchdb/data'
 
 describe('vendor → couchdb', () => {
@@ -34,6 +35,7 @@ describe('vendor → couchdb', () => {
   const insertTestDocument = () =>
     insert(
       {
+        type: 'test',
         name: faker.name.findName(),
         createdAt: new Date()
       },
@@ -119,6 +121,16 @@ describe('vendor → couchdb', () => {
         responseList.every(response =>
           expect(response).to.have.all.keys(['id', 'rev', 'name', 'createdAt'])
         )
+      })
+  })
+
+  it('should find one document by id and query', () => {
+    return insertTestDocument()
+      .then(({ id }) =>
+        findOne(id, { selector: { type: { $eq: 'test' } } }, database)
+      )
+      .then(document => {
+        assert.isOk(document)
       })
   })
 

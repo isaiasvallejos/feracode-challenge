@@ -1,10 +1,11 @@
-import { curry, compose, mergeDeepWith, flip, concat, map } from 'ramda'
+import { curry, compose, mergeDeepWith, flip, concat, head } from 'ramda'
 import {
   getRowsDocuments,
   fixDocumentKeys,
   getDocuments,
   fixDocumentsKeys
 } from './util'
+import { mergeDeepAlsoConcat } from 'util/ramda'
 
 // insert :: Object -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
 export const insert = curry((data, database) => database.insert(data))
@@ -38,9 +39,20 @@ export const find = curry((query, database) =>
 export const findAll = curry((query, database) =>
   compose(
     query => find(query, database),
-    mergeDeepWith(concat, {
+    mergeDeepAlsoConcat({
       fields: ['_id', '_rev'],
       selector: { _id: { $gt: null } }
+    })
+  )(query)
+)
+
+// findOne :: String -> Nano.MangoQuery -> Nano.Database -> Promise<Nano.DatabaseGetResponse[]>
+export const findOne = curry((id, query, database) =>
+  compose(
+    query => find(query, database).then(head),
+    mergeDeepAlsoConcat({
+      fields: ['_id', '_rev'],
+      selector: { _id: { $eq: id } }
     })
   )(query)
 )
