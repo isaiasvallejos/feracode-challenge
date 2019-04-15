@@ -18,7 +18,7 @@ import {
   createIndex
 } from 'vendor/couchdb/data'
 
-describe('database → couchdb', () => {
+describe('vendor → couchdb', () => {
   const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
 
   // Instance database with environment variables
