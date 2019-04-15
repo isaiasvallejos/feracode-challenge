@@ -44,3 +44,8 @@ export const findAll = curry((query, database) =>
     })
   )(query)
 )
+
+// createIndex :: Nano.IndexObject -> Nano.Database -> Promise<Nano.DatabaseIndexResponse>
+export const createIndex = curry((indexObject, database) =>
+  database.createIndex(indexObject)
+)
