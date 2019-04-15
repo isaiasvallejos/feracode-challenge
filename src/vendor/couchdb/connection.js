@@ -22,16 +22,29 @@ export const instanceConnection = nano
 // createConnection :: String -> Nano.Connection
 export const createConnection = url => instanceConnection(url)
 
+// createConnectionAsDefault :: Nano.Connection
+export const createConnectionAsDefault = compose(
+  createConnection,
+  getDefaultConnectionUrl
+)
+
 // useDatabase :: String -> Nano.Connection -> Nano.Database
 export const useDatabase = curry((name, connection) => connection.use(name))
 
 // instanceDatabase :: String -> String -> Nano.Database
-export const instanceDatabase = curry((url, name) =>
+export const instanceDatabase = curry((name, url) =>
   compose(
     useDatabase(name),
     createConnection
   )(url)
 )
+
+// instanceDatabase :: String -> Nano.Database
+export const instanceDatabaseAsDefault = name =>
+  compose(
+    useDatabase(name),
+    createConnectionAsDefault
+  )()
 
 // createDatabase :: String -> Nano.Connection -> Promise<Nano.DatabaseCreateResponse>
 export const createDatabase = curry((name, connection) =>
