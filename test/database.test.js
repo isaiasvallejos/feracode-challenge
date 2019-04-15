@@ -1,3 +1,4 @@
+import { compose, times } from 'ramda'
 import { expect } from 'chai'
 
 import {
@@ -18,7 +19,7 @@ describe('database → couchdb', () => {
   let connection = createConnection(url)
   let database
 
-  before('should create test database', () => {
+  beforeEach('should create test database', () => {
     return createDatabase(DATABASE_NAME, connection).then(() => {
       database = instanceDatabase(url, DATABASE_NAME)
     })
@@ -32,6 +33,8 @@ describe('database → couchdb', () => {
       },
       database
     )
+
+  const insertNTestDocuments = n => Promise.all(times(insertTestDocument, n))
 
   it('should insert a document', () => {
     return insertTestDocument().then(response => {
@@ -64,19 +67,13 @@ describe('database → couchdb', () => {
       })
   })
 
-  it('should list documents', () => {
-    const inserts = Promise.all([
-      insertTestDocument(),
-      insertTestDocument(),
-      insertTestDocument()
-    ])
-
-    return inserts
+  it('should list all documents', () => {
+    return insertNTestDocuments(3)
       .then(() => list(database))
       .then(responseList => {
         expect(responseList)
           .to.be.an('array')
-          .and.lengthOf.at.least(3)
+          .and.lengthOf(3)
 
         responseList.every(response =>
           expect(response).to.include.all.keys(['id', 'rev'])
@@ -84,7 +81,7 @@ describe('database → couchdb', () => {
       })
   })
 
-  after('should delete test database', () => {
+  afterEach('should delete test database', () => {
     return destroyDatabase(DATABASE_NAME, connection)
   })
 })
