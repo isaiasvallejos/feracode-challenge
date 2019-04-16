@@ -1,12 +1,13 @@
 import express from 'express'
 import http from 'http'
 
-import middlewares from './middlewares'
+import { postRoutesMiddlewares, preRoutesMiddlewares } from './middlewares'
 
 export const app = express()
 export const server = http.createServer(app)
 
 app.disable('x-powered-by')
-app.use(middlewares)
+app.use(preRoutesMiddlewares)
+app.use(postRoutesMiddlewares)
 
 export default server
