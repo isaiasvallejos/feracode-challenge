@@ -51,11 +51,11 @@ export const validateStock = compileSchema({
       type: 'string',
       reference: 'variant'
     },
-    name: {
-      type: 'string'
+    quantity: {
+      type: 'number'
     }
   },
-  required: ['variantId', 'name'],
+  required: ['variantId', 'quantity'],
   additionalProperties: false
 })
 
