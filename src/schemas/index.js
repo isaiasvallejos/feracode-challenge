@@ -38,24 +38,12 @@ export const validateVariant = compileSchema({
     },
     disabled: {
       type: 'boolean'
-    }
-  },
-  required: ['productId', 'name', 'disabled'],
-  additionalProperties: false
-})
-
-// validateStock :: Stock :: Promise<Stock>
-export const validateStock = compileSchema({
-  properties: {
-    variantId: {
-      type: 'string',
-      reference: 'variant'
     },
     quantity: {
       type: 'number'
     }
   },
-  required: ['variantId', 'quantity'],
+  required: ['productId', 'name', 'disabled', 'quantity'],
   additionalProperties: false
 })
 
