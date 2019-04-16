@@ -1,10 +1,14 @@
-import { prop, curry } from 'ramda'
+import { prop, curry, complement, compose } from 'ramda'
+import { toBoolean } from 'util/cast'
 
 // getStatusCode :: Response -> Integer
 export const getStatusCode = prop('statusCode')
 
 // getError :: Response -> Object
 export const getError = prop('error')
+
+// getData :: Response -> object
+export const getData = prop('data')
 
 // responseWithUnauthorized :: Response -> Response
 export const responseWithUnauthorized = response => response.status(401)
@@ -24,5 +28,20 @@ export const responseWithNoContent = response => response.status(204)
 // responseWithInternalError :: Response -> Response
 export const responseWithInternalError = response => response.status(500)
 
-// responseWithJson :: Object -> Response
+// responseWithJson :: Object -> Response -> Response
 export const responseWithJson = curry((response, json) => response.json(json))
+
+// responseHasData :: Response -> Boolean
+export const responseHasData = compose(
+  toBoolean,
+  getData
+)
+
+// responseNotHasData :: Response -> Boolean
+export const responseNotHasData = complement(responseHasData)
+
+// responseWithDataAndNext :: Response -> Object -> Response
+export const responseWithDataAndNext = curry((response, next, data) => {
+  response.data = data
+  next()
+})
