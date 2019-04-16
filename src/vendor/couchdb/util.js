@@ -1,4 +1,4 @@
-import { map, compose, prop } from 'ramda'
+import { map, compose, prop, omit } from 'ramda'
 import { renameKeys } from 'ramda-adjunct'
 
 // fixDocumentKeys :: DatabaseGetResponse -> DatabaseGetResponse
@@ -23,3 +23,6 @@ export const getRowsDocuments = compose(
 
 // getDocuments :: Nano.DatabaseFindResponse -> DatabaseGetResponse[]
 export const getDocuments = prop('docs')
+
+// sanitizeDocument :: Object -> Object
+export const sanitizeDocument = omit(['rev', 'id', '_id', '_rev'])

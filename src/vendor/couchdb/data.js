@@ -3,16 +3,21 @@ import {
   getRowsDocuments,
   fixDocumentKeys,
   getDocuments,
-  fixDocumentsKeys
+  fixDocumentsKeys,
+  sanitizeDocument
 } from './util'
 import { mergeDeepAlsoConcat } from 'util/ramda'
 
 // insert :: Object -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
-export const insert = curry((data, database) => database.insert(data))
+export const insert = curry((data, database) =>
+  database.insert(data).then(fixDocumentKeys)
+)
 
 // update :: Object -> String -> Nano.Database -> Promise<Nano.DatabaseUpdateResponse>
 export const update = curry((data, id, rev, database) =>
-  database.insert({ ...data, _rev: rev }, id)
+  database
+    .insert({ ...sanitizeDocument(data), _rev: rev }, id)
+    .then(fixDocumentKeys)
 )
 
 // get :: String -> Nano.Database -> Promise<Nano.DatabaseGetResponse>
