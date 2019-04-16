@@ -26,3 +26,9 @@ logs: # Show container logs
 
 tests: # Run applications tests with Mocha (also force development environment)
 	make dev && docker-compose exec app npm run test
+
+migrate-up: # Run migration as up
+	make dev && docker-compose exec app npm run migrate -- --up
+
+migrate-down: # Run migation as down
+	make dev && docker-compose exec app npm run migrate -- --down

@@ -8,6 +8,7 @@
     "dev": "nodemon -L --watch src --exec babel-node src/index.js",
     "test": "cross-env NODE_ENV=test mocha test/**/*.test.js --require @babel/register --exit",
     "build": "babel src/ -d dist/ -s",
+    "migrate": "babel-node scripts/migrations.js",
     "docker:build-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache app",
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d app",
     "docker:build": "docker-compose build --no-cache app",
