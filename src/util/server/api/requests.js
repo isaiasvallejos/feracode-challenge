@@ -1,4 +1,4 @@
-import { prop } from 'ramda'
+import { prop, compose } from 'ramda'
 
 // getParams :: Request -> Object
 export const getParams = prop('params')
@@ -11,3 +11,9 @@ export const getBody = prop('body')
 
 // getHeaders :: Request -> Object
 export const getHeaders = prop('headers')
+
+// getIdParam :: Request -> String
+export const getIdParam = compose(
+  prop('id'),
+  getParams
+)
