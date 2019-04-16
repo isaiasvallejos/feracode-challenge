@@ -13,6 +13,36 @@ export const insert = curry((data, database) =>
   database.insert(data).then(fixDocumentKeys)
 )
 
+// insertWithId :: Object -> String -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
+export const insertWithId = curry((data, id, database) =>
+  database.insert(data, id).then(fixDocumentKeys)
+)
+
+// createView :: ViewObject -> String -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
+export const createView = curry((data, name, database) =>
+  insertWithId(data, `_design/${name}`, database)
+)
+
+// viewBase :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
+export const viewBase = curry((designName, viewName, query, database) =>
+  database.view(designName, viewName, query).then(getRowsDocuments)
+)
+
+// view :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
+export const view = curry((designName, viewName, query, database) =>
+  viewBase(designName, viewName, { ...query, include_docs: true }, database)
+)
+
+// reduce :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
+export const reduce = curry((designName, viewName, query, database) =>
+  viewBase(designName, viewName, { ...query, reduce: true }, database)
+)
+
+// reduce :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
+export const groupReduce = curry((designName, viewName, query, database) =>
+  reduce(designName, viewName, { ...query, group: true }, database)
+)
+
 // update :: Object -> String -> Nano.Database -> Promise<Nano.DatabaseUpdateResponse>
 export const update = curry((data, id, rev, database) =>
   database
@@ -27,6 +57,11 @@ export const get = curry((id, database) =>
 
 // destroy :: String -> String -> Nano.Database -> Promise<Nano.DatabaseDestroyResponse>
 export const destroy = curry((id, rev, database) => database.destroy(id, rev))
+
+// destroy :: String -> String -> Nano.Database -> Promise<Nano.DatabaseDestroyResponse>
+export const destroyView = curry((name, rev, database) =>
+  destroy(`_design/${name}`, rev, database)
+)
 
 // list :: Nano.Database -> Promise<Nano.DatabaseGetResponse[]>
 export const list = database =>
