@@ -52,7 +52,8 @@
     "cross-env": "^5.2.0",
     "faker": "^4.1.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "yargs": "^13.2.2"
   },
   "dependencies": {
     "dotenv": "^6.2.0",
