@@ -86,6 +86,17 @@ describe('api → variants', () => {
       })
   })
 
+  step('should get all product variants', done => {
+    getRequest()
+      .get(`/api/products/${variant.productId}/variants`)
+      .end((error, response) => {
+        response.should.have.status(OK)
+        response.body.data.should.be.a('array').and.have.lengthOf(1)
+        response.body.data[0].should.to.deep.include(variant)
+        done()
+      })
+  })
+
   step('should update a variant', done => {
     getRequest()
       .put(`/api/variants/${variantId}`)
