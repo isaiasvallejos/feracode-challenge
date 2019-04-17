@@ -1,7 +1,10 @@
 import express from 'express'
 import { pipe, then, otherwise } from 'ramda'
 import { getBody, getIdParam } from 'util/server/api/requests'
-import { responseWithDataAndSuccess } from 'util/server/api/responses'
+import {
+  responseWithDataAndSuccess,
+  responseWithDataAndCreated
+} from 'util/server/api/responses'
 
 import { validateVariant } from 'schemas'
 import {
@@ -29,7 +32,7 @@ router.post('/', (request, response, next) => {
   return pipe(
     validateVariant,
     then(insertVariant),
-    then(responseWithDataAndSuccess(response, next)),
+    then(responseWithDataAndCreated(response, next)),
     otherwise(next)
   )(variant)
 })
