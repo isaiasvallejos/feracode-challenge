@@ -11,4 +11,8 @@ export const createDatabaseHelper = name => {
   return map(flippedPartialRight([database]), data)
 }
 
-export default createDatabaseHelper(process.env.COUCHDB_DATABASE)
+export default createDatabaseHelper(
+  process.env.NODE_ENV === 'test'
+    ? process.env.TEST_COUCHDB_DATABASE
+    : process.env.COUCHDB_DATABASE
+)
