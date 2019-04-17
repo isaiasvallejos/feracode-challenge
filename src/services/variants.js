@@ -6,6 +6,7 @@ const { get, insert, update, findOne, findAll } = database
 export const variantFields = [
   'productId',
   'name',
+  'quantity',
   'disabled',
   'createdAt',
   'updatedAt'
@@ -27,7 +28,7 @@ export const insertVariant = variant =>
   })
 
 // updateVariant :: Variant -> String -> Promise<Nano.DatabaseUpdateResponse>
-export const updateVariant = curry((variant, id) =>
+export const updateVariant = curry((id, variant) =>
   pipe(
     get,
     then(oldVariant => {

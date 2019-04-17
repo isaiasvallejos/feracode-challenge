@@ -52,10 +52,11 @@ router.put('/:id', (request, response, next) => {
   const id = getIdParam(request)
 
   return pipe(
-    updateVariant(variant),
+    validateVariant,
+    then(updateVariant(id)),
     then(responseWithDataAndSuccess(response, next)),
     otherwise(next)
-  )(id)
+  )(variant)
 })
 
 export default router
