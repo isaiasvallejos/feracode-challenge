@@ -1,7 +1,14 @@
 import { prop, curry, complement, compose, pipe } from 'ramda'
 import { toBoolean } from 'util/cast'
-import { getBody } from './requests'
-import { mapError } from 'util/error'
+import {
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  OK,
+  CREATED,
+  NO_CONTENT,
+  INTERNAL_ERROR,
+  NOT_FOUND
+} from './status'
 
 // getStatusCode :: Response -> Integer
 export const getStatusCode = prop('statusCode')
@@ -13,25 +20,27 @@ export const getError = prop('error')
 export const getData = prop('data')
 
 // responseWithBadRequest :: Response -> Response
-export const responseWithBadRequest = response => response.status(400)
+export const responseWithBadRequest = response => response.status(BAD_REQUEST)
 
 // responseWithUnauthorized :: Response -> Response
-export const responseWithUnauthorized = response => response.status(401)
+export const responseWithUnauthorized = response =>
+  response.status(UNAUTHORIZED)
 
 // responseWithNotFound :: Response -> Response
-export const responseWithNotFound = response => response.status(404)
+export const responseWithNotFound = response => response.status(NOT_FOUND)
 
 // responseWithOk :: Response -> Response
-export const responseWithOk = response => response.status(200)
+export const responseWithOk = response => response.status(OK)
 
 // responseWithCreated : Response -> Response
-export const responseWithCreated = response => response.status(201)
+export const responseWithCreated = response => response.status(CREATED)
 
 // responseWithNoContent:: Response -> Response
-export const responseWithNoContent = response => response.status(204)
+export const responseWithNoContent = response => response.status(NO_CONTENT)
 
 // responseWithInternalError :: Response -> Response
-export const responseWithInternalError = response => response.status(500)
+export const responseWithInternalError = response =>
+  response.status(INTERNAL_ERROR)
 
 // responseWithJson :: Object -> Response -> Response
 export const responseWithJson = curry((response, json) => response.json(json))
