@@ -64,3 +64,12 @@ export const responseWithDataAndSuccess = curry((response, next, data) =>
     () => responseWithSuccess(next)
   )(data)
 )
+
+// responseWithDataAndCreated :: Response -> Next -> Object -> None
+export const responseWithDataAndCreated = curry((response, next, data) =>
+  pipe(
+    responseWithData(response),
+    responseWithCreated,
+    () => responseWithSuccess(next)
+  )(data)
+)
