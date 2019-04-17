@@ -1,4 +1,5 @@
 import express from 'express'
+import { pipe, then, otherwise } from 'ramda'
 import { getBody, getIdParam } from 'util/server/api/requests'
 import { responseWithDataAndSuccess } from 'util/server/api/responses'
 
@@ -15,35 +16,43 @@ const router = express.Router()
 router.get('/:id', (request, response, next) => {
   const id = getIdParam(request)
 
-  return getVariant(id)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    getVariant,
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(id)
 })
 
 router.post('/', (request, response, next) => {
   const variant = getBody(request)
 
-  return validateVariant(variant)
-    .then(insertVariant)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    validateVariant,
+    then(insertVariant),
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(variant)
 })
 
 router.delete('/:id', (request, response, next) => {
   const id = getIdParam(request)
 
-  return destroyVariant(id)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    destroyVariant,
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(id)
 })
 
 router.put('/:id', (request, response, next) => {
   const variant = getBody(request)
   const id = getIdParam(request)
 
-  return updateVariant(variant, id)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    updateVariant(variant),
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(id)
 })
 
 export default router

@@ -1,4 +1,4 @@
-import { curry } from 'ramda'
+import { curry, pipe, then } from 'ramda'
 import { variantFields } from './variants'
 import database from 'database'
 
@@ -29,26 +29,32 @@ export const insertProduct = product =>
 
 // updateProduct :: Product -> String -> Promise<Nano.DatabaseUpdateResponse>
 export const updateProduct = curry((id, product) =>
-  get(id).then(oldProduct => {
-    const { rev } = oldProduct
-    return update(
-      {
-        ...oldProduct,
-        ...product,
-        updatedAt: new Date()
-      },
-      id,
-      rev
-    )
-  })
+  pipe(
+    get,
+    then(oldProduct => {
+      const { rev } = oldProduct
+      return update(
+        {
+          ...oldProduct,
+          ...product,
+          updatedAt: new Date()
+        },
+        id,
+        rev
+      )
+    })
+  )(id)
 )
 
 // destroyProduct :: String -> Promise<Nano.DatabaseUpdateResponse>
 export const destroyProduct = id =>
-  get(id).then(product => {
-    const { rev } = product
-    return update({ ...product, disabled: true }, id, rev)
-  })
+  pipe(
+    get,
+    then(product => {
+      const { rev } = product
+      return update({ ...product, disabled: true }, id, rev)
+    })
+  )(id)
 
 // listEnabledProducts :: Promise<Products[]>
 export const listEnabledProducts = () =>

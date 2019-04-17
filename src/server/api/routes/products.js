@@ -1,10 +1,9 @@
 import express from 'express'
+import { pipe, then, otherwise } from 'ramda'
 import { getBody, getIdParam } from 'util/server/api/requests'
 import {
   responseWithDataAndSuccess,
-  responseWithData,
-  responseWithCreated,
-  responseWithSuccess
+  responseWithDataAndCreated
 } from 'util/server/api/responses'
 
 import { validateProduct } from 'schemas'
@@ -20,54 +19,64 @@ import {
 const router = express.Router()
 
 router.get('/', (request, response, next) => {
-  return listEnabledProducts()
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    listEnabledProducts,
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )()
 })
 
 router.get('/:id', (request, response, next) => {
   const id = getIdParam(request)
 
-  return getProduct(id)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    getProduct,
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(id)
 })
 
 router.get('/:id/variants', (request, response, next) => {
   const id = getIdParam(request)
 
-  return getProductVariants(id)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    getProductVariants,
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(id)
 })
 
 router.post('/', (request, response, next) => {
   const product = getBody(request)
 
-  return validateProduct(product)
-    .then(insertProduct)
-    .then(responseWithData(response))
-    .then(responseWithCreated(response))
-    .then(() => responseWithSuccess(next))
-    .catch(next)
+  return pipe(
+    validateProduct,
+    then(insertProduct),
+    then(responseWithDataAndCreated(response, next)),
+    otherwise(next)
+  )(product)
 })
 
 router.delete('/:id', (request, response, next) => {
   const id = getIdParam(request)
 
-  return destroyProduct(id)
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    destroyProduct,
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(id)
 })
 
 router.put('/:id', (request, response, next) => {
   const product = getBody(request)
   const id = getIdParam(request)
 
-  return validateProduct(product)
-    .then(updateProduct(id))
-    .then(responseWithDataAndSuccess(response, next))
-    .catch(next)
+  return pipe(
+    validateProduct,
+    then(updateProduct(id)),
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(product)
 })
 
 export default router
