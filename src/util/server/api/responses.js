@@ -1,4 +1,4 @@
-import { prop, curry, complement, compose } from 'ramda'
+import { prop, curry, complement, compose, pipe } from 'ramda'
 import { toBoolean } from 'util/cast'
 import { getBody } from './requests'
 import { mapError } from 'util/error'
@@ -36,6 +36,12 @@ export const responseWithInternalError = response => response.status(500)
 // responseWithJson :: Object -> Response -> Response
 export const responseWithJson = curry((response, json) => response.json(json))
 
+// responseWithSuccess :: Next -> None
+export const responseWithSuccess = next => next()
+
+// responseWithError :: Next -> Error -> None
+export const responseWithError = curry((next, error) => next(error))
+
 // responseHasData :: Response -> Boolean
 export const responseHasData = compose(
   toBoolean,
@@ -45,8 +51,16 @@ export const responseHasData = compose(
 // responseNotHasData :: Response -> Boolean
 export const responseNotHasData = complement(responseHasData)
 
-// responseWithDataAndNext :: Response -> Object -> Response
-export const responseWithDataAndNext = curry((response, next, data) => {
+// responseWithData :: Response -> Object -> Response
+export const responseWithData = curry((response, data) => {
   response.data = data
-  next()
+  return response
 })
+
+// responseWithDataAndSuccess :: Response -> Next -> Object -> None
+export const responseWithDataAndSuccess = curry((response, next, data) =>
+  pipe(
+    responseWithData(response),
+    () => responseWithSuccess(next)
+  )(data)
+)
