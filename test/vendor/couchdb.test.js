@@ -60,8 +60,8 @@ describe('vendor → couchdb', () => {
       name: faker.name.findName()
     }
 
-    return update(updatedDocument, id, rev, database).then(document => {
-      expect(document).to.include.all.keys(['id', 'rev'])
+    return update(updatedDocument, id, rev, database).then(response => {
+      expect(response).to.include.all.keys(['id', 'rev'])
     })
   })
 
@@ -114,9 +114,7 @@ describe('vendor → couchdb', () => {
 
   step('should find one document by id and query', () => {
     return findOne(id, { selector: { type: { $eq: 'test' } } }, database).then(
-      document => {
-        assert.isOk(document)
-      }
+      document => assert.isOk(document)
     )
   })
 
