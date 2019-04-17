@@ -1,5 +1,6 @@
 import { map } from 'ramda'
 import { flippedPartialRight } from 'util/ramda'
+import { isTest } from 'util/environment'
 
 import { instanceDatabaseAsDefault } from 'vendor/couchdb/connection'
 import * as data from 'vendor/couchdb/data'
@@ -12,7 +13,5 @@ export const createDatabaseHelper = name => {
 }
 
 export default createDatabaseHelper(
-  process.env.NODE_ENV === 'test'
-    ? process.env.TEST_COUCHDB_DATABASE
-    : process.env.COUCHDB_DATABASE
+  isTest() ? process.env.TEST_COUCHDB_DATABASE : process.env.COUCHDB_DATABASE
 )
