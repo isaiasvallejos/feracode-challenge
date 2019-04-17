@@ -26,71 +26,60 @@ describe('vendor → couchdb', () => {
   let connection = createConnectionAsDefault()
   let database
 
-  beforeEach('should create test database', () => {
+  before('should create test database', () => {
     return createDatabase(DATABASE_NAME, connection).then(() => {
       database = instanceDatabaseAsDefault(DATABASE_NAME)
     })
   })
 
-  const insertTestDocument = () =>
-    insert(
-      {
-        type: 'test',
-        name: faker.name.findName(),
-        createdAt: new Date()
-      },
-      database
-    )
+  let id
+  let rev
+  let testDocument = {
+    type: 'test',
+    name: faker.name.findName()
+  }
 
-  const insertNTestDocuments = n => Promise.all(times(insertTestDocument, n))
-
-  it('should insert a document', () => {
-    return insertTestDocument().then(response => {
+  step('should insert a document', () => {
+    return insert(testDocument, database).then(response => {
       expect(response).to.include.all.keys(['id', 'rev'])
+      id = response.id
+      rev = response.rev
     })
   })
 
-  it('should get a document', () => {
-    return insertTestDocument()
-      .then(({ id }) => get(id, database))
-      .then(response => {
-        expect(response).to.include.all.keys(['id', 'rev', 'name', 'createdAt'])
-      })
+  step('should get a document', () => {
+    return get(id, database).then(document => {
+      assert.deepInclude(document, testDocument)
+      expect(document).to.include.all.keys(['id', 'rev', 'name'])
+    })
   })
 
-  it('should update a document', () => {
-    return insertTestDocument()
-      .then(({ id, rev }) =>
-        update(
-          {
-            name: faker.name.findName(),
-            updatedAt: new Date()
-          },
-          id,
-          rev,
-          database
-        )
-      )
-      .then(response => {
-        expect(response).to.include.all.keys(['id', 'rev'])
-      })
+  step('should update a document', () => {
+    let updatedDocument = {
+      ...testDocument,
+      name: faker.name.findName()
+    }
+
+    return update(updatedDocument, id, rev, database).then(document => {
+      expect(document).to.include.all.keys(['id', 'rev'])
+    })
   })
 
-  it('should list all documents', () => {
-    return insertNTestDocuments(3)
+  step('should list all documents', () => {
+    return insert(testDocument, database)
       .then(() => list(database))
-      .then(responseList => {
-        expect(responseList)
+      .then(documentList => {
+        expect(documentList)
           .to.be.an('array')
-          .and.lengthOf(3)
+          .and.lengthOf(2)
 
-        responseList.every(response =>
-          expect(response).to.include.all.keys(['id', 'rev'])
+        documentList.every(document =>
+          expect(document).to.include.all.keys(['id', 'rev', 'name'])
         )
       })
   })
 
-  it('should find documents with mango query', () => {
+  step('should find documents with mango query', () => {
     return createIndex(
       {
         index: { fields: ['name'] },
@@ -98,7 +87,6 @@ describe('vendor → couchdb', () => {
       },
       database
     )
-      .then(() => insertNTestDocuments(5))
       .then(() =>
         findAll(
           {
@@ -113,28 +101,26 @@ describe('vendor → couchdb', () => {
           database
         )
       )
-      .then(responseList => {
-        expect(responseList)
+      .then(documentList => {
+        expect(documentList)
           .to.be.an('array')
-          .and.lengthOf(3)
+          .and.lengthOf(2)
 
-        responseList.every(response =>
-          expect(response).to.have.all.keys(['id', 'rev', 'name', 'createdAt'])
+        documentList.every(document =>
+          expect(document).to.include.all.keys(['id', 'rev', 'name'])
         )
       })
   })
 
-  it('should find one document by id and query', () => {
-    return insertTestDocument()
-      .then(({ id }) =>
-        findOne(id, { selector: { type: { $eq: 'test' } } }, database)
-      )
-      .then(document => {
+  step('should find one document by id and query', () => {
+    return findOne(id, { selector: { type: { $eq: 'test' } } }, database).then(
+      document => {
         assert.isOk(document)
-      })
+      }
+    )
   })
 
-  afterEach('should delete test database', () => {
+  after('should delete test database', () => {
     return destroyDatabase(DATABASE_NAME, connection)
   })
 })
