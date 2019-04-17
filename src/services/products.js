@@ -28,7 +28,7 @@ export const insertProduct = product =>
   })
 
 // updateProduct :: Product -> String -> Promise<Nano.DatabaseUpdateResponse>
-export const updateProduct = curry((product, id) =>
+export const updateProduct = curry((id, product) =>
   get(id).then(oldProduct => {
     const { rev } = oldProduct
     return update(
