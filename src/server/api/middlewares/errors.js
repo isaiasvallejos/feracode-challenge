@@ -1,18 +1,14 @@
 import { cond, applySpec, equals, pipe, compose, always } from 'ramda'
 
-import {
-  getStatusCode,
-  responseWithJson,
-  getError
-} from 'util/server/api/responses'
+import { getStatusCode, responseWithJson } from 'util/server/api/responses'
+import { getErrorSanitized } from 'util/error'
+
 import {
   NOT_FOUND,
   INTERNAL_ERROR,
   CONFLICT,
   BAD_REQUEST
 } from 'util/server/api/status'
-
-import { errorToObject } from 'util/error'
 
 export default (error, request, response, next) =>
   pipe(
@@ -41,7 +37,7 @@ export default (error, request, response, next) =>
         ]),
         getStatusCode
       ),
-      error: always(errorToObject(error))
+      error: always(getErrorSanitized(error))
     }),
     responseWithJson(response)
   )(response)

@@ -1,3 +1,6 @@
+import { assoc, curry } from 'ramda'
+import { mapCatchError } from 'util/promise'
+
 import Ajv from 'ajv'
 
 export const validator = new Ajv({
@@ -7,5 +10,8 @@ export const validator = new Ajv({
 })
 
 // compileSchema :: Ajv.Schema -> Object -> Promise<Object>
-export const compileSchema = schema =>
-  validator.compile({ $async: true, ...schema })
+export const compileSchema = curry((schema, data) =>
+  validator
+    .compile({ $async: true, ...schema })(data)
+    .catch(mapCatchError(assoc('code', 'EVALIDATION')))
+)
