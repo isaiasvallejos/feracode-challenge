@@ -1,5 +1,7 @@
 import { prop, curry, complement, compose } from 'ramda'
 import { toBoolean } from 'util/cast'
+import { getBody } from './requests'
+import { mapError } from 'util/error'
 
 // getStatusCode :: Response -> Integer
 export const getStatusCode = prop('statusCode')
@@ -9,6 +11,9 @@ export const getError = prop('error')
 
 // getData :: Response -> object
 export const getData = prop('data')
+
+// responseWithBadRequest :: Response -> Response
+export const responseWithBadRequest = response => response.status(400)
 
 // responseWithUnauthorized :: Response -> Response
 export const responseWithUnauthorized = response => response.status(401)
