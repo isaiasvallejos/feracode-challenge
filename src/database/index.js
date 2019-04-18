@@ -1,4 +1,4 @@
-import { map } from 'ramda'
+import { map, curry, compose } from 'ramda'
 import { flippedPartialRight } from 'util/ramda'
 import { isTest } from 'util/environment'
 
@@ -9,7 +9,13 @@ export const createDatabaseHelper = name => {
   const database = instanceDatabaseAsDefault(name)
 
   // Map object to contain all data module functions
-  return map(flippedPartialRight([database]), data)
+  return map(
+    compose(
+      curry,
+      flippedPartialRight([database])
+    ),
+    data
+  )
 }
 
 export default createDatabaseHelper(
