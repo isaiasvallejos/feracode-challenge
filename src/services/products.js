@@ -12,14 +12,14 @@ export const productFields = [
   'updatedAt'
 ]
 
-// getProduct :: Integer -> Promise<Product>
+// getProduct :: String -> Promise<Product>
 export const getProduct = id =>
   findOne(id, {
     fields: productFields,
     selector: { type: { $eq: 'product' } }
   })
 
-// insertProduct :: Integer -> Promise<Error, Ok>
+// insertProduct :: Product -> Promise<Ok>
 export const insertProduct = product =>
   insert({
     ...product,
@@ -27,7 +27,7 @@ export const insertProduct = product =>
     createdAt: new Date()
   })
 
-// updateProduct :: Product -> String -> Promise<Nano.DatabaseUpdateResponse>
+// updateProduct :: String -> Product -> Promise<Nano.DatabaseUpdateResponse>
 export const updateProduct = curry((id, product) =>
   pipe(
     get,
