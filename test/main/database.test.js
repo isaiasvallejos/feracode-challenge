@@ -9,7 +9,7 @@ describe('database', () => {
     expect(helper).to.include.all.keys([
       'insert',
       'insertWithId',
-      'createView',
+      'insertDesign',
       'view',
       'reduce',
       'groupReduce',
@@ -17,6 +17,7 @@ describe('database', () => {
       'destroy',
       'destroyView',
       'update',
+      'designUpdate',
       'list',
       'find',
       'findAll',
