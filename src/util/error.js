@@ -19,3 +19,6 @@ export const getErrorSanitized = compose(
 
 // getErrorCode :: String | Integer
 export const getErrorCode = prop('code')
+
+// getErrorStatusCode :: String | Integer
+export const getErrorStatusCode = prop('statusCode')
