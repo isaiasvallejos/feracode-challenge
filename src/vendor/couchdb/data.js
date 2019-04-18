@@ -4,7 +4,8 @@ import {
   fixDocumentKeys,
   getDocuments,
   fixDocumentsKeys,
-  sanitizeDocument
+  sanitizeDocument,
+  getRows
 } from './util'
 import { mergeDeepAlsoConcat } from 'util/ramda'
 
@@ -18,24 +19,31 @@ export const insertWithId = curry((data, id, database) =>
   database.insert(data, id).then(fixDocumentKeys)
 )
 
-// createView :: ViewObject -> String -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
-export const createView = curry((data, name, database) =>
+// insertDesign :: DesignObject -> String -> Nano.Database -> Promise<Nano.DatabaseInsertResponse>
+export const insertDesign = curry((data, name, database) =>
   insertWithId(data, `_design/${name}`, database)
 )
 
 // viewBase :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
 export const viewBase = curry((designName, viewName, query, database) =>
-  database.view(designName, viewName, query).then(getRowsDocuments)
+  database.view(designName, viewName, query)
 )
 
 // view :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
 export const view = curry((designName, viewName, query, database) =>
-  viewBase(designName, viewName, { ...query, include_docs: true }, database)
+  viewBase(
+    designName,
+    viewName,
+    { ...query, include_docs: true },
+    database
+  ).then(getRowsDocuments)
 )
 
 // reduce :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
 export const reduce = curry((designName, viewName, query, database) =>
-  viewBase(designName, viewName, { ...query, reduce: true }, database)
+  viewBase(designName, viewName, { ...query, reduce: true }, database).then(
+    getRows
+  )
 )
 
 // reduce :: String -> String -> Nano.ViewQuery -> Promise<Nano.DatabaseGetResponse[]>
@@ -48,6 +56,12 @@ export const update = curry((data, id, rev, database) =>
   database
     .insert({ ...sanitizeDocument(data), _rev: rev }, id)
     .then(fixDocumentKeys)
+)
+
+// designUpdate :: String -> String -> Any -> Nano.Database -> Promise<Nano.DatabaseDesignUpdateResponse>
+export const designUpdate = curry(
+  (designName, updateName, data, id, database) =>
+    database.atomic(designName, updateName, id, data)
 )
 
 // get :: String -> Nano.Database -> Promise<Nano.DatabaseGetResponse>

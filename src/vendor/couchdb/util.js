@@ -1,6 +1,21 @@
 import { map, compose, prop, omit } from 'ramda'
 import { renameKeys } from 'ramda-adjunct'
 
+// getRows :: DatabaseDocumentResponse[]
+export const getRows = prop('rows')
+
+// getDocument :: DatabaseGetResponse
+export const getDocument = prop('doc')
+
+// getKey :: String
+export const getKey = prop('key')
+
+// getValue :: Any
+export const getValue = prop('value')
+
+// getDocuments :: Nano.DatabaseFindResponse -> DatabaseGetResponse[]
+export const getDocuments = prop('docs')
+
 // fixDocumentKeys :: DatabaseGetResponse -> DatabaseGetResponse
 export const fixDocumentKeys = renameKeys({
   _id: 'id',
@@ -15,14 +30,11 @@ export const getRowsDocuments = compose(
   map(
     compose(
       fixDocumentKeys,
-      prop('doc')
+      getDocument
     )
   ),
-  prop('rows')
+  getRows
 )
-
-// getDocuments :: Nano.DatabaseFindResponse -> DatabaseGetResponse[]
-export const getDocuments = prop('docs')
 
 // sanitizeDocument :: Object -> Object
 export const sanitizeDocument = omit(['rev', 'id', '_id', '_rev'])
