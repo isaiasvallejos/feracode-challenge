@@ -38,12 +38,9 @@ export const validateVariant = compileSchema({
     },
     disabled: {
       type: 'boolean'
-    },
-    quantity: {
-      type: 'number'
     }
   },
-  required: ['productId', 'name', 'disabled', 'quantity'],
+  required: ['productId', 'name', 'disabled'],
   additionalProperties: false
 })
 

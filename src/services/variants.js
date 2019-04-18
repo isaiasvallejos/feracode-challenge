@@ -1,4 +1,5 @@
 import { curry, pipe, then } from 'ramda'
+import { registerEmptyStock } from './stock'
 import database from 'database'
 
 const { get, insert, update, findOne, findAll } = database
@@ -6,28 +7,32 @@ const { get, insert, update, findOne, findAll } = database
 export const variantFields = [
   'productId',
   'name',
-  'quantity',
   'disabled',
   'createdAt',
-  'updatedAt'
+  'updatedAt',
+  'stock'
 ]
 
-// getVariant :: Integer -> Promise<Variant>
+// getVariant :: String -> Promise<Variant>
 export const getVariant = id =>
   findOne(id, {
     fields: variantFields,
     selector: { type: { $eq: 'variant' } }
   })
 
-// insertVariant :: Integer -> Promise<Error, Ok>
+// insertVariant :: Variant -> Promise<Ok>
 export const insertVariant = variant =>
-  insert({
-    ...variant,
-    type: 'variant',
-    createdAt: new Date()
-  })
+  pipe(
+    variant =>
+      insert({
+        ...variant,
+        type: 'variant',
+        createdAt: new Date()
+      }),
+    then(({ id }) => registerEmptyStock(id))
+  )(variant)
 
-// updateVariant :: Variant -> String -> Promise<Nano.DatabaseUpdateResponse>
+// updateVariant :: String -> Variant -> Promise<Nano.DatabaseUpdateResponse>
 export const updateVariant = curry((id, variant) =>
   pipe(
     get,
