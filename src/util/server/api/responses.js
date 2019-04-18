@@ -19,28 +19,31 @@ export const getError = prop('error')
 // getData :: Response -> object
 export const getData = prop('data')
 
+// responseWithStatus :: Response -> Response
+export const responseWithStatusCode = curry((statusCode, response) =>
+  response.status(statusCode)
+)
+
 // responseWithBadRequest :: Response -> Response
-export const responseWithBadRequest = response => response.status(BAD_REQUEST)
+export const responseWithBadRequest = responseWithStatusCode(BAD_REQUEST)
 
 // responseWithUnauthorized :: Response -> Response
-export const responseWithUnauthorized = response =>
-  response.status(UNAUTHORIZED)
+export const responseWithUnauthorized = responseWithStatusCode(UNAUTHORIZED)
 
 // responseWithNotFound :: Response -> Response
-export const responseWithNotFound = response => response.status(NOT_FOUND)
+export const responseWithNotFound = responseWithStatusCode(NOT_FOUND)
 
 // responseWithOk :: Response -> Response
-export const responseWithOk = response => response.status(OK)
+export const responseWithOk = responseWithStatusCode(OK)
 
 // responseWithCreated : Response -> Response
-export const responseWithCreated = response => response.status(CREATED)
+export const responseWithCreated = responseWithStatusCode(CREATED)
 
 // responseWithNoContent:: Response -> Response
-export const responseWithNoContent = response => response.status(NO_CONTENT)
+export const responseWithNoContent = responseWithStatusCode(NO_CONTENT)
 
 // responseWithInternalError :: Response -> Response
-export const responseWithInternalError = response =>
-  response.status(INTERNAL_ERROR)
+export const responseWithInternalError = responseWithStatusCode(INTERNAL_ERROR)
 
 // responseWithJson :: Object -> Response -> Response
 export const responseWithJson = curry((response, json) => response.json(json))
