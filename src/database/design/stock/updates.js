@@ -19,7 +19,10 @@ export const updateStock = String(function(document, request) {
       document,
       {
         code: 200,
-        json: { ok: true, id: document._id }
+        json: {
+          ok: true,
+          id: document._id
+        }
       }
     ]
   }
@@ -32,8 +35,9 @@ export const updateStockOnPurchase = String(function(document, request) {
       {
         code: 404,
         json: {
-          statusCode: 404,
-          data: { ok: false, error: 'not_found', message: 'missing' }
+          ok: false,
+          error: 'not_found',
+          message: 'missing'
         }
       }
     ]
@@ -48,8 +52,9 @@ export const updateStockOnPurchase = String(function(document, request) {
         {
           code: 422,
           json: {
-            statusCode: 422,
-            data: { ok: false, error: 'unprocessable', message: 'out of stock' }
+            ok: false,
+            error: 'unprocessable',
+            message: 'out of stock'
           }
         }
       ]
@@ -61,7 +66,10 @@ export const updateStockOnPurchase = String(function(document, request) {
       document,
       {
         code: 200,
-        json: { ok: true, id: document._id }
+        json: {
+          ok: true,
+          id: document._id
+        }
       }
     ]
   }
@@ -74,8 +82,9 @@ export const updateStockPrediction = String(function(document, request) {
       {
         code: 404,
         json: {
-          statusCode: 404,
-          data: { ok: false, error: 'not_found', message: 'missing' }
+          ok: false,
+          error: 'not_found',
+          message: 'missing'
         }
       }
     ]
@@ -89,7 +98,10 @@ export const updateStockPrediction = String(function(document, request) {
       document,
       {
         code: 200,
-        json: { ok: true, id: document._id }
+        json: {
+          ok: true,
+          id: document._id
+        }
       }
     ]
   }
