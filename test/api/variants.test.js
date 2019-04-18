@@ -11,6 +11,7 @@ import {
   createDatabase,
   createConnectionAsDefault
 } from 'vendor/couchdb/connection'
+import createDatabaseDesigns from 'database/design'
 
 import { CREATED, BAD_REQUEST, OK, NOT_FOUND } from 'util/server/api/status'
 
@@ -25,7 +26,9 @@ describe('api → variants', () => {
     chai.request((() => api.listen(process.env.TEST_PORT, _ => _))())
 
   before('should create test database', () => {
-    return createDatabase(DATABASE_NAME, connection).catch(_ => _)
+    return createDatabase(DATABASE_NAME, connection)
+      .then(createDatabaseDesigns)
+      .catch(_ => _)
   })
 
   const product = {
@@ -36,14 +39,12 @@ describe('api → variants', () => {
 
   const variant = {
     name: 'P',
-    disabled: false,
-    quantity: 100
+    disabled: false
   }
 
   const updatedVariant = {
     ...variant,
-    name: 'M',
-    quantity: 200
+    name: 'M'
   }
 
   let variantId
@@ -68,7 +69,7 @@ describe('api → variants', () => {
       .send(variant)
       .end((error, response) => {
         response.should.have.status(CREATED)
-        response.body.data.should.to.include.all.keys(['id', 'rev'])
+        response.body.data.should.to.include.all.keys(['id'])
 
         variantId = response.body.data.id
         done()
@@ -81,7 +82,10 @@ describe('api → variants', () => {
       .end((error, response) => {
         response.should.have.status(OK)
         response.body.data.should.be.a('object')
-        response.body.data.should.to.deep.include(variant)
+        response.body.data.should.to.deep.include({
+          ...variant,
+          stock: { quantity: 0 }
+        })
         done()
       })
   })
@@ -128,7 +132,6 @@ describe('api → variants', () => {
         done()
       })
   })
-
   describe('errors', done => {
     it('should fail on insert a bad variant', done => {
       getRequest()
