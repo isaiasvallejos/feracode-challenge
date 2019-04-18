@@ -58,3 +58,19 @@ export const validatePurchase = compileSchema({
   required: ['variantId', 'quantity'],
   additionalProperties: false
 })
+
+// validateStock :: Stock :: Promise<Stock>
+export const validateStock = compileSchema({
+  properties: {
+    variantId: {
+      type: 'string',
+      reference: 'variant'
+    },
+    quantity: {
+      type: 'number',
+      minimum: 0
+    }
+  },
+  required: ['variantId', 'quantity'],
+  additionalProperties: false
+})

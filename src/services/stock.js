@@ -1,12 +1,11 @@
-import { curry } from 'ramda'
 import database from 'database'
 
 const { designUpdate } = database
 
-// registerStock :: Number -> String -> Promise<Ok>
-export const registerStock = curry((quantity, variantId) =>
+// registerStock :: Stock -> Promise<Ok>
+export const registerStock = ({ quantity, variantId }) =>
   designUpdate('stock', 'register', { quantity }, variantId)
-)
 
 // registerEmptyStock :: String -> Promise<Ok>
-export const registerEmptyStock = registerStock(0)
+export const registerEmptyStock = variantId =>
+  registerStock({ quantity: 0, variantId })

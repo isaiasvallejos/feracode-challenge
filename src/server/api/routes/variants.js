@@ -6,13 +6,14 @@ import {
   responseWithDataAndCreated
 } from 'util/server/api/responses'
 
-import { validateVariant } from 'schemas'
+import { validateVariant, validateStock } from 'schemas'
 import {
   insertVariant,
   destroyVariant,
   updateVariant,
   getVariant
 } from 'services/variants'
+import { registerStock } from 'services/stock'
 
 const router = express.Router()
 
@@ -57,6 +58,20 @@ router.put('/:id', (request, response, next) => {
     then(responseWithDataAndSuccess(response, next)),
     otherwise(next)
   )(variant)
+})
+
+router.post('/:id/stock', (request, response, next) => {
+  const variantId = getIdParam(request)
+  const { quantity } = getBody(request)
+
+  const stock = { variantId, quantity }
+
+  return pipe(
+    validateStock,
+    then(registerStock),
+    then(responseWithDataAndSuccess(response, next)),
+    otherwise(next)
+  )(stock)
 })
 
 export default router

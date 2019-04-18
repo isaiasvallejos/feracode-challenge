@@ -112,13 +112,27 @@ describe('api → variants', () => {
       })
   })
 
+  step('should update variant stock', done => {
+    getRequest()
+      .post(`/api/variants/${variantId}/stock`)
+      .send({ quantity: 100 })
+      .end((error, response) => {
+        response.should.have.status(OK)
+        response.body.data.should.to.include.all.keys(['id'])
+        done()
+      })
+  })
+
   step('should get a updated variant', done => {
     getRequest()
       .get(`/api/variants/${variantId}`)
       .end((error, response) => {
         response.should.have.status(OK)
         response.body.data.should.be.a('object')
-        response.body.data.should.to.deep.include(updatedVariant)
+        response.body.data.should.to.deep.include({
+          ...updatedVariant,
+          stock: { quantity: 100 }
+        })
         done()
       })
   })
