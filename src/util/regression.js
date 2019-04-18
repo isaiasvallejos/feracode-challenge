@@ -4,7 +4,7 @@ import regression from 'regression'
 // createLinearRegression :: Pair[] -> Result
 export const createLinearRegression = regression.linear
 
-// predictLinearRegression :: Result -> Number -> Number
-export const predictLinearRegression = curry((result, value) =>
+// predictLinearRegression :: Number -> Result -> Number
+export const predictLinearRegression = curry((value, result) =>
   result.predict(value)
 )
