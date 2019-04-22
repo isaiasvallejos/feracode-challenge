@@ -84,7 +84,7 @@ describe('api → variants', () => {
         response.body.data.should.be.a('object')
         response.body.data.should.to.deep.include({
           ...variant,
-          stock: { quantity: 0 }
+          quantity: 0
         })
         done()
       })
@@ -131,7 +131,7 @@ describe('api → variants', () => {
         response.body.data.should.be.a('object')
         response.body.data.should.to.deep.include({
           ...updatedVariant,
-          stock: { quantity: 100 }
+          quantity: 100
         })
         done()
       })

@@ -10,7 +10,8 @@ export const variantFields = [
   'disabled',
   'createdAt',
   'updatedAt',
-  'stock'
+  'quantity',
+  'purchased'
 ]
 
 // getVariant :: String -> Promise<Variant>

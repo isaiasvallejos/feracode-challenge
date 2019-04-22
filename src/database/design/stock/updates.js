@@ -1,3 +1,5 @@
+import { purchaseFields } from 'services/purchases'
+
 export const updateStock = String(function(document, request) {
   if (!document) {
     return [
@@ -13,7 +15,8 @@ export const updateStock = String(function(document, request) {
   } else {
     var body = JSON.parse(request.body)
     var quantity = parseInt(body.quantity)
-    document['stock'] = { quantity: quantity }
+
+    document['quantity'] = quantity
 
     return [
       document,
@@ -43,7 +46,7 @@ export const updateStockOnPurchase = String(function(document, request) {
     ]
   } else {
     var body = JSON.parse(request.body)
-    var quantity = document['stock']['quantity']
+    var quantity = document['quantity']
     var purchased = parseInt(body.quantity)
 
     if (quantity < purchased) {
@@ -60,7 +63,10 @@ export const updateStockOnPurchase = String(function(document, request) {
       ]
     }
 
-    document['stock']['quantity'] = quantity - purchased
+    var currentPurchased = document['purchased'] || 0
+
+    document['purchased'] = currentPurchased + purchased
+    document['quantity'] = quantity - purchased
 
     return [
       document,
