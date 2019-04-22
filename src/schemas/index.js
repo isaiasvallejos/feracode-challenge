@@ -52,7 +52,8 @@ export const validatePurchase = compileSchema({
       reference: 'variant'
     },
     quantity: {
-      type: 'number'
+      type: 'number',
+      minimum: 1
     }
   },
   required: ['variantId', 'quantity'],
