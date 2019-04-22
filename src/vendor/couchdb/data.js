@@ -115,3 +115,6 @@ export const findOne = curry((id, query, database) =>
 export const createIndex = curry((indexObject, database) =>
   database.createIndex(indexObject)
 )
+
+// follow :: Nano.Follow.Options -> Nano.Database -> Nano.Follow
+export const follow = curry((options, database) => database.follow(options))
