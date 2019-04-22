@@ -15,7 +15,7 @@ import createDatabaseDesigns from 'database/design'
 
 import { CREATED, BAD_REQUEST, OK, NOT_FOUND } from 'util/server/api/status'
 
-describe.only('api → purchases', () => {
+describe('api → purchases', () => {
   const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
 
   // Instance database with environment variables
