@@ -49,7 +49,7 @@ describe('api → variants', () => {
 
   let variantId
 
-  step('should insert a product', done => {
+  before('should insert a product', done => {
     getRequest()
       .post('/api/products')
       .send(product)

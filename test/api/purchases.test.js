@@ -46,7 +46,7 @@ describe.only('api → purchases', () => {
     quantity: 10
   }
 
-  step('should insert a product', done => {
+  before('should insert a product', done => {
     getRequest()
       .post('/api/products')
       .send(product)
@@ -59,7 +59,7 @@ describe.only('api → purchases', () => {
       })
   })
 
-  step('should insert a variant', done => {
+  before('should insert a variant', done => {
     getRequest()
       .post('/api/variants')
       .send(variant)
@@ -72,7 +72,7 @@ describe.only('api → purchases', () => {
       })
   })
 
-  step('should update variant stock', done => {
+  before('should update variant stock', done => {
     getRequest()
       .post(`/api/variants/${purchase.variantId}/stock`)
       .send({ quantity: 100 })
