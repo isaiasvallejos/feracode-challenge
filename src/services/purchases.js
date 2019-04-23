@@ -1,4 +1,15 @@
-import { curry, then, pipe, map, flatten, applySpec, compose } from 'ramda'
+import {
+  curry,
+  then,
+  pipe,
+  map,
+  flatten,
+  applySpec,
+  prop,
+  compose,
+  sortBy
+} from 'ramda'
+import { parse, getTime } from 'date-fns'
 import { getKey, getValue } from 'vendor/couchdb/util'
 
 import database from 'database'
@@ -6,6 +17,21 @@ import database from 'database'
 const { designUpdate, insert, findAll, groupReduce } = database
 
 export const purchaseFields = ['variantId', 'quantity', 'date']
+
+// getQuantity :: Purchase -> Number
+export const getQuantity = prop('quantity')
+
+// getDate :: Purchase -> Date
+export const getDate = compose(
+  parse,
+  prop('date')
+)
+
+// getDateAsTime :: Purchase -> Date
+export const getDateAsTime = compose(
+  getTime,
+  getDate
+)
 
 // registerPurchase :: Number -> String -> Promise<Ok>
 export const registerPurchase = curry((quantity, variantId) =>
@@ -51,3 +77,6 @@ export const listReducedPurchases = () =>
       )
     )
   )({})
+
+// sortPurchasesByDate :: Purchase[] -> Purchase[]
+export const sortPurchasesByDate = sortBy(getDateAsTime)
