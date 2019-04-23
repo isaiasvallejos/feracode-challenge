@@ -5,6 +5,7 @@ import regression from 'regression'
 export const createLinearRegression = regression.linear
 
 // predictLinearRegression :: Number -> Result -> Number
-export const predictLinearRegression = curry((value, result) =>
-  result.predict(value)
-)
+export const predictLinearRegression = curry((value, result) => {
+  const [_, predictValue] = result.predict(value)
+  return predictValue
+})
