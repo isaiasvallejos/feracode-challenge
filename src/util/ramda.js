@@ -1,4 +1,4 @@
-import { partialRight, flip, mergeDeepWith, concat } from 'ramda'
+import { partialRight, flip, mergeDeepWith, concat, append } from 'ramda'
 
 /**
  * @see https://ramdajs.com/docs
@@ -7,3 +7,5 @@ import { partialRight, flip, mergeDeepWith, concat } from 'ramda'
 export const flippedPartialRight = flip(partialRight)
 
 export const mergeDeepAlsoConcat = mergeDeepWith(concat)
+
+export const appendFlip = flip(append)
