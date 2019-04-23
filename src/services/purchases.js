@@ -14,7 +14,7 @@ import { getKey, getValue } from 'vendor/couchdb/util'
 
 import database from 'database'
 
-const { designUpdate, insert, findAll, groupReduce } = database
+const { designUpdate, insert, findAll, groupReduce, follow } = database
 
 export const purchaseFields = ['variantId', 'quantity', 'date']
 
@@ -80,3 +80,15 @@ export const listReducedPurchases = () =>
 
 // sortPurchasesByDate :: Purchase[] -> Purchase[]
 export const sortPurchasesByDate = sortBy(getDateAsTime)
+
+// getPurchasesFeed :: Nano.Follow
+export const getPurchasesFeed = () =>
+  follow({
+    since: 'now',
+    filter: function(document, request) {
+      if (document.type != 'purchase') {
+        return false
+      }
+      return true
+    }
+  })
