@@ -1,5 +1,5 @@
-import { curry, then, pipe } from 'ramda'
-import { keyValueListToObject } from 'util/ramda'
+import { curry, then, pipe, map, flatten, applySpec, compose } from 'ramda'
+import { getKey, getValue } from 'vendor/couchdb/util'
 
 import database from 'database'
 
@@ -17,14 +17,15 @@ export const insertPurchase = purchase => {
   const { quantity, variantId } = purchase
 
   return pipe(
-    purchase =>
+    registerPurchase(quantity),
+    then(() =>
       insert({
         ...purchase,
         type: 'purchase',
         date: new Date()
-      }),
-    then(() => registerPurchase(quantity, variantId))
-  )(purchase)
+      })
+    )
+  )(variantId)
 }
 
 // listAllPurchases :: Promise<Purchase[]>
@@ -34,5 +35,19 @@ export const listAllPurchases = () =>
     selector: { type: { $eq: 'purchase' } }
   })
 
-// listReducedPurchases :: Promise<Purchase[]>
-export const listReducedPurchases = () => groupReduce('stock', 'purchases', {})
+// listReducedPurchases :: Promise<PurchaseGroup[]>
+export const listReducedPurchases = () =>
+  pipe(
+    groupReduce('stock', 'purchases'),
+    then(
+      map(
+        applySpec({
+          variantId: getKey,
+          purchases: compose(
+            flatten,
+            getValue
+          )
+        })
+      )
+    )
+  )({})
