@@ -1,4 +1,4 @@
-import { curry, compose } from 'ramda'
+import { curry, compose, always } from 'ramda'
 import { concatAll } from 'ramda-adjunct'
 import nano from 'nano'
 
@@ -54,4 +54,12 @@ export const createDatabase = curry((name, connection) =>
 // destroyDatabase :: String -> Nano.Connection -> Promise<Nano.DatabaseDestroyResponse>
 export const destroyDatabase = curry((name, connection) =>
   connection.db.destroy(name)
+)
+
+// getDatabase :: String -> Nano.Connection -> Promise<Nano.DatabaseInfoResponse>
+export const getDatabase = curry((name, connection) => connection.db.get(name))
+
+// getDatabaseOrNil :: String -> Nano.Connection -> Promise<Nano.DatabaseInfoResponse>
+export const getDatabaseOrNil = curry((name, connection) =>
+  getDatabase(name, connection).catch(always(null))
 )
