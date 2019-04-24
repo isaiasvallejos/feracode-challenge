@@ -8,8 +8,8 @@ export const app = express()
 export const server = http.createServer(app)
 
 app.disable('x-powered-by')
-app.use('/api', preRoutesMiddlewares)
+app.use(preRoutesMiddlewares)
 app.use('/api', routes)
-app.use('/api', postRoutesMiddlewares)
+app.use(postRoutesMiddlewares)
 
 export default server
