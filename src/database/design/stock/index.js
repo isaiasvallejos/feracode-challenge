@@ -14,7 +14,7 @@ export const createStockDesign = () =>
       updates: {
         register: updateStock,
         purchase: updateStockOnPurchase,
-        prediction: updateStockPrediction
+        'prediction:soldout': updateStockPrediction
       },
       views: {
         purchases: purchasesView

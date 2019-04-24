@@ -1,5 +1,3 @@
-import { purchaseFields } from 'services/purchases'
-
 export const updateStock = String(function(document, request) {
   if (!document) {
     return [
@@ -18,6 +16,12 @@ export const updateStock = String(function(document, request) {
 
     document['quantity'] = quantity
 
+    if (quantity > 0) {
+      document['stock'] = 'available'
+    } else {
+      document['stock'] = 'unavailable'
+    }
+
     return [
       document,
       {
@@ -32,7 +36,7 @@ export const updateStock = String(function(document, request) {
 })
 
 export const updateStockOnPurchase = String(function(document, request) {
-  if (!document) {
+  if (!document || document['disabled']) {
     return [
       null,
       {
@@ -68,6 +72,10 @@ export const updateStockOnPurchase = String(function(document, request) {
     document['purchased'] = currentPurchased + purchased
     document['quantity'] = quantity - purchased
 
+    if (document['quantity'] == 0) {
+      document['stock'] = 'unavailable'
+    }
+
     return [
       document,
       {
@@ -82,7 +90,7 @@ export const updateStockOnPurchase = String(function(document, request) {
 })
 
 export const updateStockPrediction = String(function(document, request) {
-  if (!document) {
+  if (!document || document['disabled']) {
     return [
       null,
       {
@@ -96,9 +104,25 @@ export const updateStockPrediction = String(function(document, request) {
     ]
   } else {
     var body = JSON.parse(request.body)
-    var endsIn = new Date(body.endsIn)
+    var prediction = body.prediction
+    var now = new Date().getTime()
+    var soldOutIn = +(prediction - now).toFixed(0)
+    var currentSoldOutIn = document['soldOutIn']
+    var quantity = document['quantity']
 
-    document['stock']['endsIn'] = endsIn
+    if (currentSoldOutIn >= 0) {
+      if (soldOutIn > 0 && quantity > 0) {
+        document['stock'] = 'available'
+        document['soldOutIn'] = soldOutIn
+      } else if (quantity > 0) {
+        document['stock'] = 'stagnant'
+        document['soldOutIn'] = 0
+      } else {
+        document['soldOutIn'] = 0
+      }
+    } else {
+      document['soldOutIn'] = 0
+    }
 
     return [
       document,

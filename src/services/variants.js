@@ -1,18 +1,26 @@
-import { curry, pipe, then } from 'ramda'
+import { curry, pipe, then, prop, add, converge } from 'ramda'
 import { registerEmptyStock } from './stock'
 import database from 'database'
 
-const { get, insert, update, findOne, findAll } = database
+const { get, insert, update, findOne } = database
 
 export const variantFields = [
   'productId',
+  'stock',
   'name',
   'disabled',
   'createdAt',
   'updatedAt',
   'quantity',
-  'purchased'
+  'purchased',
+  'soldOutIn'
 ]
+
+// getQuantity :: Variant -> Number
+export const getQuantity = prop('quantity')
+
+// getPurchased :: Variant -> Number
+export const getPurchased = prop('purchased')
 
 // getVariant :: String -> Promise<Variant>
 export const getVariant = id =>
@@ -21,6 +29,20 @@ export const getVariant = id =>
     selector: { type: { $eq: 'variant' } }
   })
 
+// getVariantStock :: String -> Number
+export const getVariantStock = id =>
+  pipe(
+    getVariant,
+    then(getQuantity)
+  )(id)
+
+// getVariantStockWithPurchased :: String -> Number
+export const getVariantStockWithPurchased = id =>
+  pipe(
+    getVariant,
+    then(converge(add, [getPurchased, getQuantity]))
+  )(id)
+
 // insertVariant :: Variant -> Promise<Ok>
 export const insertVariant = variant =>
   pipe(
@@ -28,6 +50,7 @@ export const insertVariant = variant =>
       insert({
         ...variant,
         type: 'variant',
+        purchased: 0,
         createdAt: new Date()
       }),
     then(({ id }) => registerEmptyStock(id))
