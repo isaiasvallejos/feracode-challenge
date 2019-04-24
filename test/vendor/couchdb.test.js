@@ -1,13 +1,5 @@
-import { compose, times } from 'ramda'
 import { expect, assert } from 'chai'
 import faker from 'faker'
-
-import {
-  destroyDatabase,
-  createDatabase,
-  createConnectionAsDefault,
-  instanceDatabaseAsDefault
-} from 'vendor/couchdb/connection'
 
 import {
   insert,
@@ -19,18 +11,14 @@ import {
   findOne
 } from 'vendor/couchdb/data'
 
+import {
+  database,
+  createTestDatabaseWithoutDesign,
+  destroyTestDatabase
+} from '../util'
+
 describe('vendor → couchdb', () => {
-  const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
-
-  // Instance database with environment variables
-  let connection = createConnectionAsDefault()
-  let database
-
-  before('should create test database', () => {
-    return createDatabase(DATABASE_NAME, connection).then(() => {
-      database = instanceDatabaseAsDefault(DATABASE_NAME)
-    })
-  })
+  before('should create test database', createTestDatabaseWithoutDesign)
 
   let id
   let rev
@@ -118,7 +106,5 @@ describe('vendor → couchdb', () => {
     )
   })
 
-  after('should delete test database', () => {
-    return destroyDatabase(DATABASE_NAME, connection)
-  })
+  after('should delete test database', destroyTestDatabase)
 })

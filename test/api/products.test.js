@@ -1,32 +1,14 @@
-import chai, { expect, should } from 'chai'
-import chaiHttp from 'chai-http'
-import api from 'server/api'
 import faker from 'faker'
-
-chai.use(chaiHttp)
-chai.should()
-
 import {
-  destroyDatabase,
-  createDatabase,
-  createConnectionAsDefault
-} from 'vendor/couchdb/connection'
+  createTestDatabase,
+  destroyTestDatabase,
+  getTestRequest
+} from '../util'
 
 import { CREATED, BAD_REQUEST, OK, NOT_FOUND } from 'util/server/api/status'
 
 describe('api → products', () => {
-  const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
-
-  // Instance database with environment variables
-  let connection = createConnectionAsDefault()
-
-  // Instance request to express app
-  const getRequest = () =>
-    chai.request((() => api.listen(process.env.TEST_PORT, _ => _))())
-
-  before('should create test database', () => {
-    return createDatabase(DATABASE_NAME, connection).catch(_ => _)
-  })
+  before('should create test database', createTestDatabase)
 
   const product = {
     name: faker.commerce.productName(),
@@ -43,7 +25,7 @@ describe('api → products', () => {
   let productId
 
   step('should insert a product', done => {
-    getRequest()
+    getTestRequest()
       .post('/api/products')
       .send(product)
       .end((error, response) => {
@@ -56,7 +38,7 @@ describe('api → products', () => {
   })
 
   step('should get a product', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/products/${productId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -67,7 +49,7 @@ describe('api → products', () => {
   })
 
   step('should get all products', done => {
-    getRequest()
+    getTestRequest()
       .get('/api/products')
       .end((error, response) => {
         response.should.have.status(OK)
@@ -78,7 +60,7 @@ describe('api → products', () => {
   })
 
   step('should update a product', done => {
-    getRequest()
+    getTestRequest()
       .put(`/api/products/${productId}`)
       .send(updatedProduct)
       .end((error, response) => {
@@ -89,7 +71,7 @@ describe('api → products', () => {
   })
 
   step('should get a updated product', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/products/${productId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -100,7 +82,7 @@ describe('api → products', () => {
   })
 
   step('should delete a product', done => {
-    getRequest()
+    getTestRequest()
       .delete(`/api/products/${productId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -110,7 +92,7 @@ describe('api → products', () => {
   })
 
   step('should not list a deleted product', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/products`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -121,7 +103,7 @@ describe('api → products', () => {
 
   describe('errors', done => {
     it('should fail on insert a bad product', done => {
-      getRequest()
+      getTestRequest()
         .post('/api/products')
         .send({ badrequest: true })
         .end((error, response) => {
@@ -133,7 +115,7 @@ describe('api → products', () => {
     })
 
     it('should fail on update a bad product', done => {
-      getRequest()
+      getTestRequest()
         .put(`/api/products/${productId}`)
         .send({ badrequest: true })
         .end((error, response) => {
@@ -145,7 +127,7 @@ describe('api → products', () => {
     })
 
     it('should not found an nonexistent product', done => {
-      getRequest()
+      getTestRequest()
         .get(`/api/products/fakeid`)
         .end((error, response) => {
           response.should.have.status(NOT_FOUND)
@@ -154,7 +136,5 @@ describe('api → products', () => {
     })
   })
 
-  after('should delete test database', () => {
-    return destroyDatabase(DATABASE_NAME, connection)
-  })
+  after('should delete test database', destroyTestDatabase)
 })

@@ -1,35 +1,14 @@
-import chai, { expect, should } from 'chai'
-import chaiHttp from 'chai-http'
-import api from 'server/api'
 import faker from 'faker'
-
-chai.use(chaiHttp)
-chai.should()
-
 import {
-  destroyDatabase,
-  createDatabase,
-  createConnectionAsDefault
-} from 'vendor/couchdb/connection'
-import createDatabaseDesigns from 'database/design'
+  createTestDatabase,
+  destroyTestDatabase,
+  getTestRequest
+} from '../util'
 
 import { CREATED, BAD_REQUEST, OK, NOT_FOUND } from 'util/server/api/status'
 
 describe('api → variants', () => {
-  const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
-
-  // Instance database with environment variables
-  let connection = createConnectionAsDefault()
-
-  // Instance request to express app
-  const getRequest = () =>
-    chai.request((() => api.listen(process.env.TEST_PORT, _ => _))())
-
-  before('should create test database', () => {
-    return createDatabase(DATABASE_NAME, connection)
-      .then(createDatabaseDesigns)
-      .catch(_ => _)
-  })
+  before('should create test database', createTestDatabase)
 
   const product = {
     name: faker.commerce.productName(),
@@ -50,7 +29,7 @@ describe('api → variants', () => {
   let variantId
 
   before('should insert a product', done => {
-    getRequest()
+    getTestRequest()
       .post('/api/products')
       .send(product)
       .end((error, response) => {
@@ -64,7 +43,7 @@ describe('api → variants', () => {
   })
 
   step('should insert a variant', done => {
-    getRequest()
+    getTestRequest()
       .post('/api/variants')
       .send(variant)
       .end((error, response) => {
@@ -77,7 +56,7 @@ describe('api → variants', () => {
   })
 
   step('should get a variant', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/variants/${variantId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -91,7 +70,7 @@ describe('api → variants', () => {
   })
 
   step('should get all product variants', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/products/${variant.productId}/variants`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -102,7 +81,7 @@ describe('api → variants', () => {
   })
 
   step('should update a variant', done => {
-    getRequest()
+    getTestRequest()
       .put(`/api/variants/${variantId}`)
       .send(updatedVariant)
       .end((error, response) => {
@@ -113,7 +92,7 @@ describe('api → variants', () => {
   })
 
   step('should update variant stock', done => {
-    getRequest()
+    getTestRequest()
       .post(`/api/variants/${variantId}/stock`)
       .send({ quantity: 100 })
       .end((error, response) => {
@@ -124,7 +103,7 @@ describe('api → variants', () => {
   })
 
   step('should get a updated variant', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/variants/${variantId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -138,7 +117,7 @@ describe('api → variants', () => {
   })
 
   step('should delete a variant', done => {
-    getRequest()
+    getTestRequest()
       .delete(`/api/variants/${variantId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -148,7 +127,7 @@ describe('api → variants', () => {
   })
   describe('errors', done => {
     it('should fail on insert a bad variant', done => {
-      getRequest()
+      getTestRequest()
         .post('/api/variants')
         .send({ badrequest: true })
         .end((error, response) => {
@@ -160,7 +139,7 @@ describe('api → variants', () => {
     })
 
     it('should fail on update a bad variant', done => {
-      getRequest()
+      getTestRequest()
         .put(`/api/variants/${variantId}`)
         .send({ badrequest: true })
         .end((error, response) => {
@@ -172,7 +151,7 @@ describe('api → variants', () => {
     })
 
     it('should not found an nonexistent variant', done => {
-      getRequest()
+      getTestRequest()
         .get(`/api/variants/fakeid`)
         .end((error, response) => {
           response.should.have.status(NOT_FOUND)
@@ -181,7 +160,5 @@ describe('api → variants', () => {
     })
   })
 
-  after('should delete test database', () => {
-    return destroyDatabase(DATABASE_NAME, connection)
-  })
+  after('should delete test database', destroyTestDatabase)
 })

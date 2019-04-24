@@ -1,35 +1,14 @@
-import chai, { expect, should } from 'chai'
-import chaiHttp from 'chai-http'
-import api from 'server/api'
 import faker from 'faker'
-
-chai.use(chaiHttp)
-chai.should()
-
 import {
-  destroyDatabase,
-  createDatabase,
-  createConnectionAsDefault
-} from 'vendor/couchdb/connection'
-import createDatabaseDesigns from 'database/design'
+  createTestDatabase,
+  destroyTestDatabase,
+  getTestRequest
+} from '../util'
 
 import { CREATED, BAD_REQUEST, OK, NOT_FOUND } from 'util/server/api/status'
 
 describe('api → purchases', () => {
-  const DATABASE_NAME = process.env.TEST_COUCHDB_DATABASE
-
-  // Instance database with environment variables
-  let connection = createConnectionAsDefault()
-
-  // Instance request to express app
-  const getRequest = () =>
-    chai.request((() => api.listen(process.env.TEST_PORT, _ => _))())
-
-  before('should create test database', () => {
-    return createDatabase(DATABASE_NAME, connection)
-      .then(createDatabaseDesigns)
-      .catch(_ => _)
-  })
+  before('should create test database', createTestDatabase)
 
   const product = {
     name: faker.commerce.productName(),
@@ -47,7 +26,7 @@ describe('api → purchases', () => {
   }
 
   before('should insert a product', done => {
-    getRequest()
+    getTestRequest()
       .post('/api/products')
       .send(product)
       .end((error, response) => {
@@ -60,7 +39,7 @@ describe('api → purchases', () => {
   })
 
   before('should insert a variant', done => {
-    getRequest()
+    getTestRequest()
       .post('/api/variants')
       .send(variant)
       .end((error, response) => {
@@ -73,7 +52,7 @@ describe('api → purchases', () => {
   })
 
   before('should update variant stock', done => {
-    getRequest()
+    getTestRequest()
       .post(`/api/variants/${purchase.variantId}/stock`)
       .send({ quantity: 100 })
       .end((error, response) => {
@@ -84,7 +63,7 @@ describe('api → purchases', () => {
   })
 
   step('should insert a purchase', done => {
-    getRequest()
+    getTestRequest()
       .post('/api/purchases')
       .send(purchase)
       .end((error, response) => {
@@ -95,7 +74,7 @@ describe('api → purchases', () => {
   })
 
   step('should update variant properties after purchase', done => {
-    getRequest()
+    getTestRequest()
       .get(`/api/variants/${purchase.variantId}`)
       .end((error, response) => {
         response.should.have.status(OK)
@@ -111,7 +90,7 @@ describe('api → purchases', () => {
 
   describe('errors', done => {
     it('should fail on insert a purchase negative quantity', done => {
-      getRequest()
+      getTestRequest()
         .post('/api/purchases')
         .send({ quantity: -1 })
         .end((error, response) => {
@@ -123,7 +102,7 @@ describe('api → purchases', () => {
     })
 
     it('should fail on purchase a bad variant', done => {
-      getRequest()
+      getTestRequest()
         .post('/api/purchases')
         .send({ variantId: 'badid', quantity: 10 })
         .end((error, response) => {
@@ -135,7 +114,5 @@ describe('api → purchases', () => {
     })
   })
 
-  after('should delete test database', () => {
-    return destroyDatabase(DATABASE_NAME, connection)
-  })
+  after('should delete test database', destroyTestDatabase)
 })
