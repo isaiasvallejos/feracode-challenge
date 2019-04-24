@@ -33,17 +33,14 @@ export const getDateAsTime = compose(
   getDate
 )
 
-// registerPurchase :: Number -> String -> Promise<Ok>
-export const registerPurchase = curry((quantity, variantId) =>
+// registerPurchase :: Purchase -> Promise<Ok>
+export const registerPurchase = ({ quantity, variantId }) =>
   designUpdate('stock', 'purchase', { quantity }, variantId)
-)
 
 // insertPurchase :: Purchase -> Promise<Ok>
-export const insertPurchase = purchase => {
-  const { quantity, variantId } = purchase
-
-  return pipe(
-    registerPurchase(quantity),
+export const insertPurchase = purchase =>
+  pipe(
+    registerPurchase,
     then(() =>
       insert({
         ...purchase,
@@ -51,8 +48,7 @@ export const insertPurchase = purchase => {
         date: new Date()
       })
     )
-  )(variantId)
-}
+  )(purchase)
 
 // listAllPurchases :: Promise<Purchase[]>
 export const listAllPurchases = () =>
