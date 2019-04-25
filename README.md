@@ -33,7 +33,7 @@ Todos os produtos possuem gerenciamento de estoque, compra e também possuem uma
 Recomenda-se a instalação da aplicação em cima de um ambiente Docker.
 
 ```sh
-$ git clone git@github.com:isaiasvallejos/feracode-challenge.git
+$ git clone https://github.com/isaiasvallejos/feracode-challenge
 $ cd feracode-challenge
 $ mv .env.example .env
 $ make dev # npm run docker:dev
