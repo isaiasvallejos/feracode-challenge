@@ -17,6 +17,7 @@ Todos os produtos possuem gerenciamento de estoque, compra e também possuem uma
 
 - [Node.js](https://nodejs.org) (>= v10)
   - [Express.js](https://expressjs.com) - framework web para API RESTs
+  - [Nano](https://github.com/apache/nano) - driver/biblioteca para gerenciamento de CouchDB
   - [Ramda](https://ramdajs.com) - biblioteca para orquestração e composição de código funcional
   - [Winston](https://github.com/winstonjs/winston) - biblioteca para gerenciamento de logs
   - [Babel](https://babeljs.io/) - compilador de Javascript
