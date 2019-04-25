@@ -2,6 +2,8 @@
 
 ![](https://img.shields.io/github/package-json/v/isaiasvallejos/feracode-challenge.svg) ![](https://img.shields.io/github/license/isaiasvallejos/feracode-challenge.svg) ![](https://img.shields.io/github/languages/top/isaiasvallejos/feracode-challenge.svg?&color=yellow)
 
+Em produção em: https://fera.isaiasvallejos.dev
+
 ## Sumário
 
 Esse repositório representa um desafio proposto pela empresa [Feracode](https://feracode.com/) e está sendo disponibilizado também como caso de estudo e portfolio.
