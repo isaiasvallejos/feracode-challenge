@@ -62,10 +62,12 @@
     "date-fns": "^1.30.1",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "express-winston": "^3.1.0",
     "inquirer": "^6.3.1",
     "nano": "^8.0.1",
     "ramda": "^0.26.1",
     "ramda-adjunct": "^2.17.0",
-    "regression": "^2.0.1"
+    "regression": "^2.0.1",
+    "winston": "^3.2.1"
   }
 }
