@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import 'dotenv/config'
 import { argv } from 'yargs'
 import inquirer from 'inquirer'
 
