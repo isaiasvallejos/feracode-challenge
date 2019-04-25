@@ -9,6 +9,8 @@
     "test": "cross-env NODE_ENV=test mocha test/**/*.test.js --require @babel/register --require mocha-steps --exit",
     "build": "babel src/ -d dist/ -s",
     "migrate": "babel-node scripts/migrations.js",
+    "migrate-up": "npm run migrate -- --up",
+    "migrate-down": "npm run migrate -- --down",
     "docker:build-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache app",
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d app",
     "docker:build": "docker-compose build --no-cache app",
@@ -17,7 +19,9 @@
     "docker:stop": "docker-compose stop app",
     "docker:remove": "docker-compose rm app",
     "docker:logs": "docker-compose logs app",
-    "docker:tests": "npm run dev && docker-compose exec app npm run test"
+    "docker:tests": "npm run dev && docker-compose exec app npm run test",
+    "docker:migrate-up": "docker-compose exec app npm run migrate -- --up",
+    "docker:migrate-down": "docker-compose exec app npm run migrate -- --down"
   },
   "repository": {
     "type": "git",
